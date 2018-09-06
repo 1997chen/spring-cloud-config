@@ -1,0 +1,65 @@
+spring:
+  application:
+    name: eureka-server
+  security:
+    user:
+      name: chen
+      password: 123456
+---
+spring:
+  profiles: peer1
+server:
+  port: 8001
+eureka:
+  instance:
+    hostname: peer1
+    #服务剔除时间
+    #服务续约时间
+    lease-expiration-duration-in-seconds: 90
+    lease-renewal-interval-in-seconds: 30
+    #如果有上下文 ${server.servletPath}/info
+    status-page-url: /info
+    health-check-url: /health
+    #home-page-url:
+
+  client:
+    healthcheck:
+      enabled: true
+    register-with-eureka: true
+    fetch-registry: true
+    #service-url:
+      #defaultZone: http://chen:123456@peer2:8002/eureka,
+    availability-zones:
+      beijing: zone-1,zone-2
+    region: beijing
+    service-url:
+      zone-1: http://chen:123456@peer1:8001/eureka
+      zone-2: http://chen:123456@peer2:8002/eureka
+  server:
+    #是否禁用自我保护模式
+    enable-self-preservation: false
+---
+spring:
+  profiles: peer2
+server:
+  port: 8002
+
+eureka:
+  instance:
+    hostname: peer2
+  client:
+    healthcheck:
+      enabled: true
+    register-with-eureka: true
+    fetch-registry: true
+    #service-url:
+      #defaultZone: http://chen:123456@peer1:8001/eureka
+    availability-zones:
+      beijing: zone-2,zone-1
+    region: beijing
+    service-url:
+      zone-1: http://chen:123456@peer1:8001/eureka
+      zone-2: http://chen:123456@peer2:8002/eureka
+  server:
+    #是否禁用自我保护模式
+    enable-self-preservation: true
